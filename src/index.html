@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <!-- ESSENCIAL PARA RESPONSIVIDADE: sem esta linha o celular encolhe a página inteira -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SMART GDM</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap">
+
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+
+  <!-- ÍCONES: ficam todos aqui, uma única vez. Para usar um ícone:
+       <svg><use href="#i-user"></use></svg> -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+      <symbol id="i-bus" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="15" rx="2.5"/><path d="M5 11h14"/><path d="M12 11V3"/><path d="M9.5 6.2h5"/><circle cx="8.5" cy="14.5" r=".6"/><circle cx="15.5" cy="14.5" r=".6"/><path d="M7.5 18v2.5M16.5 18v2.5"/></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M10.7 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-2.2 3.2"/><path d="M6.6 6.7A17 17 0 0 0 2 12s3.5 7 10 7a9.7 9.7 0 0 0 5.4-1.6"/><path d="m2 2 20 20"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- .tela = o cartão inteiro, com dois blocos:
+       .marca (escuro, com a logo) e .acesso (claro, com o formulário).
+       No celular ficam um em cima do outro; no computador, lado a lado. -->
+  <main class="tela">
+
+    <!-- ===== BLOCO 1: MARCA ===== -->
+    <section class="marca" aria-labelledby="titulo-smart">
+
+      <svg class="marca__aneis" viewBox="0 0 400 400" aria-hidden="true">
+        <circle cx="200" cy="200" r="60"/>
+        <circle cx="200" cy="200" r="105"/>
+        <circle cx="200" cy="200" r="150"/>
+        <circle cx="200" cy="200" r="195"/>
+      </svg>
+
+      <div class="marca__conteudo">
+        <img class="logo" src="img/logoSmart.jpeg" width="112" height="112"
+             alt="Logo do SMART: um ônibus dentro de um marcador de localização">
+
+        <h1 class="titulo" id="titulo-smart">SMART</h1>
+
+        <p class="subtitulo">
+          Sistema de Monitoramento Automatizado para Rastreamento do Transporte
+        </p>
+
+        <!-- Só aparece em telas grandes. MEXA AQUI para trocar os textos. -->
+        <ul class="destaques">
+          <li><svg aria-hidden="true"><use href="#i-pin"></use></svg> Veja onde o transporte está agora</li>
+          <li><svg aria-hidden="true"><use href="#i-clock"></use></svg> Acompanhe horários e rotas</li>
+          <li><svg aria-hidden="true"><use href="#i-bell"></use></svg> Receba avisos de atrasos e mudanças</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===== BLOCO 2: ACESSO ===== -->
+    <section class="acesso" aria-labelledby="titulo-acesso">
+      <div class="acesso__interno">
+
+        <header class="acesso__cabecalho">
+          <h2 id="titulo-acesso">Acesso ao Sistema</h2>
+          <p>Selecione seu perfil e entre com suas credenciais</p>
+        </header>
+
+        <!-- Botões "radio" de verdade (escondidos) + <label> estilizado.
+             Teclado e leitor de tela funcionam sem JavaScript extra. -->
+        <fieldset class="perfis">
+          <legend class="so-leitor">Escolha seu perfil</legend>
+
+          <label class="perfil">
+            <input type="radio" name="perfil" value="funcionario">
+            <span class="perfil__corpo perfil__corpo--func">
+              <svg aria-hidden="true"><use href="#i-user"></use></svg>
+              Funcionário
+            </span>
+          </label>
+
+          <label class="perfil">
+            <input type="radio" name="perfil" value="motorista">
+            <span class="perfil__corpo perfil__corpo--mot">
+              <svg aria-hidden="true"><use href="#i-bus"></use></svg>
+              Motorista
+            </span>
+          </label>
+        </fieldset>
+
+        <p class="aviso" id="aviso-perfil">Selecione o perfil acima para continuar</p>
+
+        <!-- Começa escondido (atributo "hidden"); o script.js mostra -->
+        <form class="form" id="form-login" novalidate hidden>
+          <h3 class="form__titulo" id="form-titulo">Entrar</h3>
+
+          <div class="campo">
+            <label for="usuario" id="usuario-rotulo">Matrícula</label>
+            <input id="usuario" name="usuario" type="text" required
+                   autocomplete="username" placeholder="Ex.: 004521">
+          </div>
+
+          <div class="campo">
+            <label for="senha">Senha</label>
+            <div class="campo__senha">
+              <input id="senha" name="senha" type="password" required
+                     autocomplete="current-password" placeholder="Digite sua senha">
+              <button type="button" class="olho" id="btn-olho" aria-label="Mostrar senha">
+                <svg aria-hidden="true"><use href="#i-eye" id="olho-icone"></use></svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="botao botao--primario">Entrar</button>
+          <p class="mensagem" id="mensagem" role="status"></p>
+        </form>
+
+        <p class="ajuda">
+          Problemas de acesso?
+          <button type="button" class="link" id="btn-rh" aria-expanded="false" aria-controls="nota-rh">Fale com o RH</button>
+        </p>
+        <p class="aviso aviso--rh" id="nota-rh" hidden>
+          Procure o RH da GDM para recuperar ou liberar o seu acesso.
+        </p>
+
+        <button type="button" class="botao botao--contorno" id="btn-admin" aria-pressed="false">
+          <svg aria-hidden="true"><use href="#i-shield"></use></svg>
+          Acesso do administrador
+        </button>
+
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

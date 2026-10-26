@@ -1,0 +1,396 @@
+/* ==========================================================
+   SMART - estilos
+   1. TOKENS: cores e medidas nomeadas no começo. Mude uma linha, muda o site todo.
+   2. BASE E CELULAR: o layout padrão é o do celular ("mobile first").
+   3. TABLET e DESKTOP: no fim, @media ADICIONA regras para telas maiores.
+   ========================================================== */
+
+
+/* ---------- 1. TOKENS ---------- */
+:root {
+  /* Cores da marca */
+  --navy:       #081b30;
+  --navy-texto: #8fa3bb;
+  --teal:       #0b8a87;
+  --gold:       #daa521;
+
+  /* Cores que mudam entre tema claro e escuro */
+  --stage:  #d5dce7;   /* fundo ao redor do cartão (tablet/desktop) */
+  --panel:  #eff2f7;   /* painel claro de acesso */
+  --card:   #ffffff;   /* cartões e campos */
+  --ink:    #081b30;   /* texto principal */
+  --muted:  #5d6b7e;   /* texto secundário */
+  --line:   #d5dbe5;   /* bordas */
+  --field:  #e6ebf3;   /* caixa "selecione o perfil" */
+  --link:   #0a7571;   /* links */
+  --ring:   rgba(11, 138, 135, .28);  /* brilho do item selecionado */
+
+  --fonte: "Outfit", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --raio: 1rem;
+}
+
+/* Tema escuro automático: só trocamos os valores dos tokens */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --stage: #040d18;
+    --panel: #0f2036;
+    --card:  #152a44;
+    --ink:   #eaf1f8;
+    --muted: #9aabc0;
+    --line:  #27405e;
+    --field: #12263d;
+    --link:  #4fc3bd;
+    --ring:  rgba(79, 195, 189, .3);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --stage: #040d18;
+  --panel: #0f2036;
+  --card:  #152a44;
+  --ink:   #eaf1f8;
+  --muted: #9aabc0;
+  --line:  #27405e;
+  --field: #12263d;
+  --link:  #4fc3bd;
+  --ring:  rgba(79, 195, 189, .3);
+  color-scheme: dark;
+}
+
+
+/* ---------- 2. BASE ---------- */
+
+/* border-box: padding e borda ficam DENTRO da largura do elemento */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { height: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--fonte);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--stage);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p { margin: 0; }
+
+/* O atributo "hidden" do HTML perde para regras como "display: grid".
+   Esta linha garante que hidden sempre esconde. */
+[hidden] { display: none !important; }
+
+svg { flex: none; }
+.perfil svg, .botao svg, .destaques svg, .olho svg {
+  width: 1.5rem; height: 1.5rem;
+  fill: none; stroke: currentColor;
+  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* Esconde da tela, mas leitores de tela ainda leem */
+.so-leitor {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* Contorno visível ao navegar pelo teclado */
+:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+
+
+/* ---------- 3. LAYOUT NO CELULAR (padrão) ---------- */
+
+.tela {
+  flex: 1;
+  display: flex;
+  flex-direction: column;   /* um bloco embaixo do outro */
+  width: 100%;
+}
+
+/* ===== Bloco escuro (marca) ===== */
+.marca {
+  position: relative;
+  overflow: hidden;
+  background: var(--navy);
+  color: #fff;
+  text-align: center;
+  padding-top: 3rem;
+  padding-bottom: 4.5rem;   /* espaço extra: o painel claro sobe e cobre uma parte */
+  padding-left:  max(1rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1rem, env(safe-area-inset-right, 0px));
+}
+
+.marca__aneis {
+  position: absolute;
+  right: -8rem; bottom: -9rem;
+  width: 24rem; max-width: none;
+  fill: none; stroke: var(--teal); stroke-width: 10;
+  opacity: .18;
+  pointer-events: none;
+}
+
+.marca__conteudo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: 28rem;
+  margin-inline: auto;
+}
+
+.logo {
+  width: 7rem; height: 7rem;
+  border-radius: 1.75rem;
+  display: block;
+}
+
+.titulo {
+  margin-top: .5rem;
+  /* clamp(mínimo, ideal, máximo): cresce com a tela dentro de limites */
+  font-size: clamp(2.5rem, 12vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: .01em;
+}
+
+.subtitulo {
+  max-width: 22rem;
+  font-size: .9rem;
+  color: var(--navy-texto);
+  text-wrap: balance;
+}
+
+/* Escondida no celular, aparece só no desktop */
+.destaques { display: none; }
+
+/* ===== Bloco claro (acesso) ===== */
+.acesso {
+  position: relative;
+  flex: 1;
+  margin-top: -2rem;   /* sobe e sobrepõe o bloco escuro */
+  background: var(--panel);
+  border-radius: 2rem 2rem 0 0;
+  padding-top: 1.75rem;
+  padding-bottom: 2rem;
+  padding-left:  max(1rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1rem, env(safe-area-inset-right, 0px));
+}
+
+.acesso__interno {
+  width: 100%;
+  max-width: 28rem;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;   /* "gap" espaça os filhos sem precisar de margens */
+}
+
+.acesso__cabecalho { display: grid; gap: .25rem; }
+.acesso__cabecalho h2 { font-size: 1.25rem; font-weight: 700; }
+.acesso__cabecalho p  { font-size: .875rem; color: var(--muted); }
+
+/* ----- Cartões de perfil ----- */
+.perfis {
+  display: grid;
+  grid-template-columns: 1fr 1fr;   /* duas colunas iguais */
+  gap: .75rem;
+  margin: 0; padding: 0; border: 0;
+  min-width: 0;
+}
+
+.perfil { position: relative; display: block; cursor: pointer; }
+
+/* O radio real fica transparente por cima do cartão: clicável e focável */
+.perfil input {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  margin: 0; opacity: 0; cursor: pointer;
+}
+
+.perfil__corpo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  padding: 1.1rem .5rem;
+  font-weight: 600;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: var(--raio);
+  transition: border-color .15s, box-shadow .15s;
+}
+.perfil__corpo svg { width: 1.75rem; height: 1.75rem; }
+.perfil__corpo--func svg { color: var(--teal); }
+.perfil__corpo--mot  svg { color: var(--gold); }
+
+/* "+" = elemento IRMÃO logo depois. Radio marcado => destaca o cartão ao lado */
+.perfil input:checked + .perfil__corpo {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 4px var(--ring);
+}
+.perfil input:focus-visible + .perfil__corpo {
+  outline: 3px solid var(--teal);
+  outline-offset: 2px;
+}
+
+/* ----- Caixas de aviso ----- */
+.aviso {
+  padding: 1.1rem;
+  text-align: center;
+  font-size: .875rem;
+  color: var(--muted);
+  background: var(--field);
+  border-radius: var(--raio);
+}
+
+/* ----- Formulário ----- */
+.form { display: grid; gap: 1rem; }
+.form__titulo { font-size: 1.05rem; font-weight: 700; }
+
+.campo { display: grid; gap: .35rem; min-width: 0; }
+.campo label { font-size: .875rem; font-weight: 600; }
+
+.campo input {
+  width: 100%;
+  height: 3rem;
+  padding: 0 .9rem;
+  font: inherit;
+  font-size: 1rem;   /* 16px ou mais: evita o zoom automático do iPhone */
+  color: var(--ink);
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: .75rem;
+}
+.campo input::placeholder { color: var(--muted); opacity: .8; }
+.campo input:focus { outline: 3px solid var(--ring); border-color: var(--teal); }
+.campo input[aria-invalid="true"] { border-color: #c0392b; }
+
+.campo__senha { position: relative; }
+.campo__senha input { padding-right: 3.25rem; }   /* espaço para o botão do olho */
+
+.olho {
+  position: absolute; top: 0; right: 0;
+  width: 3rem; height: 3rem;
+  display: grid; place-items: center;
+  color: var(--muted);
+  background: none; border: 0; cursor: pointer;
+}
+
+.mensagem { min-height: 1.25rem; font-size: .875rem; text-align: center; color: var(--muted); }
+.mensagem--erro { color: #c0392b; }
+:root[data-theme="dark"] .mensagem--erro { color: #ff8a7a; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .mensagem--erro { color: #ff8a7a; }
+}
+
+/* ----- Botões ----- */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  width: 100%;
+  min-height: 3rem;   /* alvo de toque confortável */
+  padding: 0 1rem;
+  font: inherit;
+  font-weight: 700;
+  border: 1.5px solid transparent;
+  border-radius: .75rem;
+  cursor: pointer;
+}
+.botao--primario { background: var(--gold); color: var(--navy); }
+.botao--primario:hover { filter: brightness(1.06); }
+
+.botao--contorno {
+  color: var(--ink);
+  background: var(--card);
+  border-color: var(--line);
+  box-shadow: 0 1px 2px rgba(8, 27, 48, .08);
+}
+.botao--contorno[aria-pressed="true"] { border-color: var(--teal); box-shadow: 0 0 0 4px var(--ring); }
+
+/* ----- Ajuda ----- */
+.ajuda { text-align: center; font-size: .875rem; color: var(--muted); }
+.link {
+  padding: 0; font: inherit; font-weight: 700;
+  color: var(--link); background: none; border: 0; cursor: pointer;
+}
+.link:hover { text-decoration: underline; }
+
+
+/* ==========================================================
+   4. TABLET (a partir de 768px)
+   O cartão deixa de ocupar a tela toda: fica centralizado, arredondado.
+   ========================================================== */
+@media (min-width: 48rem) {
+  body {
+    justify-content: center;
+    padding-block: 2rem;
+    padding-left:  max(1rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1rem, env(safe-area-inset-right, 0px));
+  }
+
+  .tela {
+    flex: none;
+    max-width: 34rem;
+    margin-inline: auto;
+    overflow: hidden;
+    border-radius: 2rem;
+    box-shadow: 0 30px 60px -24px rgba(8, 27, 48, .5);
+  }
+
+  .marca  { padding-inline: 2rem; padding-top: 3.5rem; padding-bottom: 5rem; }
+  .acesso { padding-inline: 2rem; padding-bottom: 2.5rem; }
+}
+
+
+/* ==========================================================
+   5. DESKTOP (a partir de 1024px)
+   De uma coluna para DUAS lado a lado. O HTML continua igual.
+   ========================================================== */
+@media (min-width: 64rem) {
+  .tela {
+    max-width: 70rem;
+    display: grid;
+    grid-template-columns: 5fr 4fr;
+    min-height: 36rem;
+  }
+
+  .marca {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    padding: 4rem;
+  }
+  .marca__aneis { right: -6rem; bottom: -8rem; width: 30rem; }
+  .marca__conteudo { align-items: flex-start; margin-inline: 0; gap: 1.25rem; }
+  .logo { width: 8.5rem; height: 8.5rem; }
+  .subtitulo { max-width: 26rem; font-size: 1rem; }
+
+  .destaques {
+    display: grid;
+    gap: .9rem;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .destaques li { display: flex; align-items: center; gap: .75rem; color: #dbe6f2; }
+  .destaques svg { color: var(--gold); }
+
+  .acesso {
+    margin-top: 0;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    padding: 3rem 4rem;
+  }
+}
+
+/* Respeita quem desativou animações no sistema */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
