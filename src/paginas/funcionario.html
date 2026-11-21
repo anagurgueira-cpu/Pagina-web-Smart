@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  SMART - Painel do funcionário
+  ============================================================
+  Uma só página, com 5 "abas" (seções). O menu troca qual seção aparece.
+
+    Início       -> tempo do fretado e percurso
+    Frequência   -> calendário do mês
+    Ausência     -> justificar/registrar falta (atestado, férias, home office)
+    Reclamar     -> enviar reclamações
+    Perfil       -> seus dados e seu ponto de embarque
+
+  Arquivos usados:
+    style.css       -> cores (tokens), botões, campos (da página de acesso)
+    painel.css      -> estilos dos painéis
+    smart-dados.js  -> dados e funções compartilhadas (também usado pela cozinha)
+    funcionario.js  -> o que acontece nesta página
+-->
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SMART GDM - Painel do funcionário</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap">
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="painel.css">
+
+  <!-- A ORDEM IMPORTA: smart-dados.js primeiro, funcionario.js depois -->
+  <script src="smart-dados.js" defer></script>
+  <script src="funcionario.js" defer></script>
+</head>
+
+<body class="painel">
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+      <symbol id="i-calendar-x" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m10 14 4 4m0-4-4 4"/></symbol>
+      <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+      <symbol id="i-bus" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="15" rx="2.5"/><path d="M5 11h14"/><path d="M12 11V3"/><path d="M9.5 6.2h5"/><circle cx="8.5" cy="14.5" r=".6"/><circle cx="15.5" cy="14.5" r=".6"/><path d="M7.5 18v2.5M16.5 18v2.5"/></symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+      <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+      <symbol id="i-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- ===== BARRA DO TOPO ===== -->
+  <header class="topo">
+    <div class="topo__interno">
+      <a class="topo__marca" href="index.html" aria-label="SMART, voltar ao início">
+        <img src="img/logo-smart.png" width="40" height="40" alt="">
+        <span>SMART</span>
+      </a>
+      <div class="topo__usuario">
+        <span class="topo__perfil">Funcionário</span>
+        <a class="topo__sair" href="index.html">Sair</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- .miolo = menu + conteúdo.
+       Celular: o menu fica fixo embaixo da tela.
+       Desktop: o menu vira uma coluna à esquerda. (veja painel.css) -->
+  <div class="miolo">
+
+    <nav class="menu" aria-label="Seções do painel">
+      <button type="button" class="menu__item" data-aba="inicio" aria-current="page">
+        <svg aria-hidden="true"><use href="#i-home"></use></svg><span>Início</span>
+      </button>
+      <button type="button" class="menu__item" data-aba="frequencia">
+        <svg aria-hidden="true"><use href="#i-calendar"></use></svg><span>Frequência</span>
+      </button>
+      <button type="button" class="menu__item" data-aba="ausencia">
+        <svg aria-hidden="true"><use href="#i-calendar-x"></use></svg><span>Ausência</span>
+      </button>
+      <button type="button" class="menu__item" data-aba="reclamacoes">
+        <svg aria-hidden="true"><use href="#i-message"></use></svg><span>Reclamar</span>
+      </button>
+      <button type="button" class="menu__item" data-aba="perfil">
+        <svg aria-hidden="true"><use href="#i-user"></use></svg><span>Perfil</span>
+      </button>
+    </nav>
+
+    <main class="area">
+
+      <!-- ================= ABA: INÍCIO ================= -->
+      <section class="aba" id="aba-inicio">
+        <div>
+          <div class="titulo-pagina">
+            <h1 class="aba__titulo">Meu fretado</h1>
+            <span class="etiqueta">Dados de exemplo</span>
+          </div>
+          <p class="linha-nome" id="linha-nome"></p>
+        </div>
+
+        <section class="resumo" aria-label="Resumo da viagem">
+          <div class="resumo__item resumo__item--destaque">
+            <span class="resumo__rotulo">Chega no seu ponto em</span>
+            <span class="resumo__valor" id="eta-valor">--</span>
+          </div>
+          <div class="resumo__item">
+            <span class="resumo__rotulo">Fretado</span>
+            <span class="resumo__valor resumo__valor--menor" id="onibus-num">--</span>
+          </div>
+          <div class="resumo__item">
+            <span class="resumo__rotulo">Situação</span>
+            <span class="resumo__valor resumo__valor--menor" id="situacao">--</span>
+          </div>
+        </section>
+
+        <div class="grade">
+          <section class="cartao" aria-labelledby="t-percurso">
+            <h2 class="cartao__titulo" id="t-percurso">Percurso da linha</h2>
+            <ol class="percurso" id="lista-percurso"></ol>
+          </section>
+
+          <div class="lateral">
+            <section class="cartao" aria-labelledby="t-horarios">
+              <h2 class="cartao__titulo" id="t-horarios">Próximos fretados no seu ponto</h2>
+              <ul class="horarios" id="lista-horarios"></ul>
+            </section>
+
+            <section class="cartao" aria-labelledby="t-avisos">
+              <h2 class="cartao__titulo" id="t-avisos">Avisos</h2>
+              <div class="vazio">
+                <svg aria-hidden="true"><use href="#i-bell"></use></svg>
+                <p id="avisos-texto"></p>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= ABA: FREQUÊNCIA ================= -->
+      <section class="aba" id="aba-frequencia" hidden>
+        <div>
+          <div class="titulo-pagina">
+            <h1 class="aba__titulo">Minha frequência</h1>
+            <span class="etiqueta">Dados de exemplo</span>
+          </div>
+          <p class="aba__sub">Dias em que você usou o fretado, faltou ou justificou.</p>
+        </div>
+
+        <section class="resumo" aria-label="Resumo do mês">
+          <div class="resumo__item resumo__item--destaque">
+            <span class="resumo__rotulo">Frequência no mês</span>
+            <span class="resumo__valor" id="freq-percentual">--</span>
+          </div>
+          <div class="resumo__item">
+            <span class="resumo__rotulo">Presenças</span>
+            <span class="resumo__valor resumo__valor--menor" id="freq-presencas">--</span>
+          </div>
+          <div class="resumo__item">
+            <span class="resumo__rotulo">Faltas sem justificativa</span>
+            <span class="resumo__valor resumo__valor--menor" id="freq-faltas">--</span>
+          </div>
+        </section>
+        <p class="aba__sub" id="freq-justificadas"></p>
+
+        <section class="cartao" aria-labelledby="t-calendario">
+          <h2 class="so-leitor" id="t-calendario">Calendário</h2>
+          <div class="cal__topo">
+            <button type="button" class="botao-icone" id="mes-anterior" aria-label="Mês anterior">
+              <svg aria-hidden="true"><use href="#i-left"></use></svg>
+            </button>
+            <strong class="cal__mes" id="cal-mes"></strong>
+            <button type="button" class="botao-icone" id="mes-seguinte" aria-label="Próximo mês">
+              <svg aria-hidden="true"><use href="#i-right"></use></svg>
+            </button>
+          </div>
+
+          <div class="cal__semana" aria-hidden="true">
+            <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+          </div>
+          <div class="cal__dias" id="cal-dias"></div>
+
+          <ul class="legenda">
+            <li><i class="amostra amostra--presente"></i> P = presente</li>
+            <li><i class="amostra amostra--justificada"></i> J = justificada</li>
+            <li><i class="amostra amostra--falta"></i> F = falta sem justificativa</li>
+          </ul>
+          <p class="nota">Teve falta sem justificativa?
+            <button type="button" class="link" data-aba="ausencia">Registre na aba Ausência</button>.
+          </p>
+        </section>
+      </section>
+
+      <!-- ================= ABA: AUSÊNCIA ================= -->
+      <section class="aba" id="aba-ausencia" hidden>
+        <div>
+          <h1 class="aba__titulo">Avisar ausência</h1>
+          <p class="aba__sub">Registre ou justifique os dias em que você não vai usar, ou não usou, o fretado.</p>
+        </div>
+
+        <section class="cartao" aria-labelledby="t-novo-aus">
+          <h2 class="cartao__titulo" id="t-novo-aus">Novo registro</h2>
+
+          <form class="formulario" id="form-ausencia" novalidate>
+            <div class="campo">
+              <label for="aus-motivo">Motivo</label>
+              <select id="aus-motivo" name="motivo">
+                <option value="atestado">Atestado médico</option>
+                <option value="ferias">Férias</option>
+                <option value="home-office">Home office</option>
+                <option value="outro">Outro motivo</option>
+              </select>
+            </div>
+
+            <!-- repeat(auto-fit, minmax(10rem, 1fr)): as datas ficam lado a lado
+                 quando cabem e empilham quando não cabem, sem @media -->
+            <div class="duas-colunas">
+              <div class="campo">
+                <label for="aus-inicio">Data inicial</label>
+                <input id="aus-inicio" name="inicio" type="date" required>
+              </div>
+              <div class="campo">
+                <label for="aus-fim">Data final <span class="opcional">(opcional)</span></label>
+                <input id="aus-fim" name="fim" type="date">
+              </div>
+            </div>
+
+            <div class="campo">
+              <label for="aus-obs">Observação <span class="opcional">(opcional)</span></label>
+              <textarea id="aus-obs" name="obs" rows="3" maxlength="300"></textarea>
+            </div>
+
+            <button type="submit" class="botao botao--primario">Registrar ausência</button>
+            <p class="mensagem" id="aus-msg" role="status"></p>
+          </form>
+
+          <p class="nota">Nesta versão de exemplo, os registros ficam salvos só neste navegador.</p>
+        </section>
+
+        <section class="cartao" aria-labelledby="t-meus-aus">
+          <h2 class="cartao__titulo" id="t-meus-aus">Meus registros</h2>
+          <ul class="registros" id="lista-ausencias"></ul>
+        </section>
+      </section>
+
+      <!-- ================= ABA: RECLAMAÇÕES ================= -->
+      <section class="aba" id="aba-reclamacoes" hidden>
+        <div>
+          <h1 class="aba__titulo">Reclamações</h1>
+          <p class="aba__sub">Conte o que aconteceu com o fretado. Quanto mais detalhes, melhor.</p>
+        </div>
+
+        <section class="cartao" aria-labelledby="t-nova-rec">
+          <h2 class="cartao__titulo" id="t-nova-rec">Nova reclamação</h2>
+
+          <form class="formulario" id="form-reclamacao" novalidate>
+            <div class="campo">
+              <label for="rec-categoria">Assunto</label>
+              <select id="rec-categoria" name="categoria">
+                <option value="atraso">Atraso</option>
+                <option value="lotacao">Fretado lotado</option>
+                <option value="limpeza">Limpeza e conforto</option>
+                <option value="motorista">Motorista</option>
+                <option value="rota">Rota ou ponto de embarque</option>
+                <option value="outro">Outro assunto</option>
+              </select>
+            </div>
+
+            <div class="campo">
+              <label for="rec-texto">O que aconteceu?</label>
+              <textarea id="rec-texto" name="texto" rows="5" maxlength="600" required
+                        placeholder="Ex.: O fretado passou 20 minutos depois do horário na segunda-feira."></textarea>
+            </div>
+
+            <button type="submit" class="botao botao--primario">Enviar reclamação</button>
+            <p class="mensagem" id="rec-msg" role="status"></p>
+          </form>
+
+          <p class="nota">Nesta versão de exemplo, as reclamações ficam salvas só neste navegador.</p>
+        </section>
+
+        <section class="cartao" aria-labelledby="t-minhas-rec">
+          <h2 class="cartao__titulo" id="t-minhas-rec">Minhas reclamações</h2>
+          <ul class="registros" id="lista-reclamacoes"></ul>
+        </section>
+      </section>
+
+      <!-- ================= ABA: PERFIL ================= -->
+      <section class="aba" id="aba-perfil" hidden>
+        <div>
+          <div class="titulo-pagina">
+            <h1 class="aba__titulo">Meu perfil</h1>
+            <span class="etiqueta">Dados de exemplo</span>
+          </div>
+        </div>
+
+        <section class="cartao" aria-label="Dados do funcionário">
+          <div class="id-topo">
+            <span class="avatar" id="perfil-iniciais" aria-hidden="true"></span>
+            <div>
+              <strong class="id-nome" id="perfil-nome"></strong>
+              <p class="aba__sub">Funcionário</p>
+            </div>
+          </div>
+
+          <!-- <dl> = lista de "termo: descrição". Perfeita para ficha de dados -->
+          <dl class="dados">
+            <div><dt>Matrícula</dt><dd id="perfil-matricula"></dd></div>
+            <div><dt>Setor</dt><dd id="perfil-setor"></dd></div>
+            <div><dt>Turno</dt><dd id="perfil-turno"></dd></div>
+            <div><dt>Linha do fretado</dt><dd id="perfil-linha"></dd></div>
+            <div><dt>Seu ponto de embarque</dt><dd id="perfil-ponto"></dd></div>
+            <div><dt>Horário previsto no ponto</dt><dd id="perfil-embarque"></dd></div>
+          </dl>
+        </section>
+      </section>
+
+    </main>
+  </div>
+</body>
+</html>

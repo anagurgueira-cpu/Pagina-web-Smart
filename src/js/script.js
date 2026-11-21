@@ -27,6 +27,14 @@ const PERFIS = {
     placeholder: "nome@empresa.com",
     autocomplete: "email",
   },
+
+   cozinha: {
+    titulo: "Entrar como cozinha",
+    rotulo: "Matrícula",
+    tipo: "text",
+    placeholder: "Ex.: 004521",
+    autocomplete: "username",
+  },
 };
 
 /* Pegamos os elementos da página uma vez só, pelo id */

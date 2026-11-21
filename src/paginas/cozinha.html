@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  SMART - Painel da cozinha
+  ============================================================
+  A cozinha precisa saber QUANTAS refeições preparar. Esse número vem de:
+    funcionários atendidos no turno  -  ausências avisadas no dia
+
+  Por privacidade, a cozinha vê apenas as QUANTIDADES. O motivo da ausência
+  (por exemplo, atestado médico) nunca aparece aqui.
+
+  Usa os mesmos arquivos do painel do funcionário:
+    style.css, painel.css, smart-dados.js  + cozinha.js (novo)
+-->
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SMART GDM - Painel da cozinha</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap">
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="painel.css">
+  <script src="smart-dados.js" defer></script>
+  <script src="cozinha.js" defer></script>
+</head>
+
+<body class="painel">
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+      <symbol id="i-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+    </defs>
+  </svg>
+
+  <header class="topo">
+    <div class="topo__interno">
+      <a class="topo__marca" href="index.html" aria-label="SMART, voltar ao início">
+        <img src="img/logo-smart.png" width="40" height="40" alt="">
+        <span>SMART</span>
+      </a>
+      <div class="topo__usuario">
+        <span class="topo__perfil">Cozinha</span>
+        <a class="topo__sair" href="index.html">Sair</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="conteudo aba">
+
+    <div>
+      <div class="titulo-pagina">
+        <h1 class="aba__titulo">Refeições previstas</h1>
+        <span class="etiqueta">Dados de exemplo</span>
+      </div>
+      <p class="linha-nome data-extenso" id="data-extenso"></p>
+    </div>
+
+    <!-- Escolha do dia: anterior, calendário, próximo, hoje -->
+    <div class="seletor-data">
+      <button type="button" class="botao-icone" id="dia-anterior" aria-label="Dia anterior">
+        <svg aria-hidden="true"><use href="#i-left"></use></svg>
+      </button>
+      <input type="date" id="dia-escolhido" aria-label="Escolher o dia">
+      <button type="button" class="botao-icone" id="dia-seguinte" aria-label="Próximo dia">
+        <svg aria-hidden="true"><use href="#i-right"></use></svg>
+      </button>
+      <button type="button" class="botao-pequeno" id="dia-hoje">Hoje</button>
+    </div>
+
+    <p class="aviso" id="aviso-fim-semana" hidden>Não há fretado nem refeições previstas aos sábados e domingos.</p>
+
+    <section class="resumo" aria-label="Resumo do dia">
+      <div class="resumo__item resumo__item--destaque">
+        <span class="resumo__rotulo">Refeições a preparar</span>
+        <span class="resumo__valor" id="total-refeicoes">--</span>
+      </div>
+      <div class="resumo__item">
+        <span class="resumo__rotulo">Funcionários atendidos</span>
+        <span class="resumo__valor resumo__valor--menor" id="total-atendidos">--</span>
+      </div>
+      <div class="resumo__item">
+        <span class="resumo__rotulo">Ausências avisadas</span>
+        <span class="resumo__valor resumo__valor--menor" id="total-ausencias">--</span>
+      </div>
+    </section>
+
+    <div class="grade grade--cozinha">
+
+      <section class="cartao" aria-labelledby="t-turnos">
+        <h2 class="cartao__titulo" id="t-turnos">Por turno</h2>
+        <div class="tabela-rolavel">
+          <table class="tabela">
+            <thead>
+              <tr>
+                <th scope="col">Turno</th>
+                <th scope="col" class="num">Atendidos</th>
+                <th scope="col" class="num">Ausências</th>
+                <th scope="col" class="num">Refeições</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-turnos"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="lateral">
+        <section class="cartao" aria-labelledby="t-semana">
+          <h2 class="cartao__titulo" id="t-semana">Refeições na semana</h2>
+          <ul class="semana" id="lista-semana"></ul>
+        </section>
+
+        <section class="cartao" aria-labelledby="t-privacidade">
+          <h2 class="cartao__titulo" id="t-privacidade">Como o número é calculado</h2>
+          <div class="vazio">
+            <svg aria-hidden="true"><use href="#i-shield"></use></svg>
+            <p>Atendidos no turno menos as ausências avisadas pelos funcionários. A cozinha vê só as quantidades; o motivo da ausência não aparece aqui.</p>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </main>
+</body>
+</html>

@@ -10,8 +10,8 @@
 :root {
   /* Cores da marca */
   --navy:       #081b30;
-  --navy-texto: #8fa3bb;
-  --teal:       #0b8a87;
+  --navy-texto: #51647a;
+  --teal:       #31ada1;
   --gold:       #daa521;
 
   /* Cores que mudam entre tema claro e escuro */
